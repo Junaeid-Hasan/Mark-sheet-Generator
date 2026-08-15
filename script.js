@@ -260,6 +260,8 @@ function parseWorksheet(sheet) {
     });
 
     workbookData.subjects = subjectsMap;
+    // sectionHighest is computed after all students are parsed
+    workbookData.sectionHighest = {}; // { section: { subjName: { ct, hy, hasCT, hasHY } } }
 
     // Student Rows Parsing (Row index 10 to max)
     let students = [];
@@ -303,13 +305,7 @@ function parseWorksheet(sheet) {
                 let ctVal = (ctObt !== null && ctObt !== undefined && ctObt !== '') ? parseFloat(ctObt) : 0;
                 let hyVal = (hyObt !== null && hyObt !== undefined && hyObt !== '') ? parseFloat(hyObt) : 0;
 
-                // Track highest obtained mark across class for each test column
-                if (ctVal > subj.classTest.highestObtained) {
-                    subj.classTest.highestObtained = ctVal;
-                }
-                if (hyVal > subj.halfYearly.highestObtained) {
-                    subj.halfYearly.highestObtained = hyVal;
-                }
+                // (highest marks are computed in a second pass after all students are collected)
 
                 // Pass/Fail is determined ONLY by Half-Yearly score vs Subject Pass Mark
                 // Class Test mark does NOT affect pass/fail status and is NOT added to total
@@ -334,8 +330,8 @@ function parseWorksheet(sheet) {
                 let subjTotal = hyVal;
 
                 studentObj.subjects[subj.name] = {
-                    classTest: { obtained: (ctObt !== null && ctObt !== '') ? ctVal : null, max: subj.classTest.max },
-                    halfYearly: { obtained: (hyObt !== null && hyObt !== '') ? hyVal : null, max: subj.halfYearly.max, passMark: passMark },
+                    classTest: { obtained: (ctObt !== null && ctObt !== '') ? ctVal : null, max: subj.classTest.max, hasCol: subj.classTest.col !== null },
+                    halfYearly: { obtained: (hyObt !== null && hyObt !== '') ? hyVal : null, max: subj.halfYearly.max, passMark: passMark, hasCol: subj.halfYearly.col !== null },
                     totalObtained: subjTotal,
                     totalMax: subj.halfYearly.max,
                     isFailed: isFailed
@@ -353,15 +349,11 @@ function parseWorksheet(sheet) {
     workbookData.students = students;
     workbookData.sections = Array.from(sectionSet).sort();
 
-    // Auto-populate teacher class inputs with detected class and section
+    // Auto-populate teacher1 class input with detected class and section
     const t1ClassInput = document.getElementById('teacher1-class-input');
-    const t2ClassInput = document.getElementById('teacher2-class-input');
     const firstSection = workbookData.sections[0] || 'A';
     if (t1ClassInput) {
         t1ClassInput.value = `${cleanClass}-${firstSection}`;
-    }
-    if (t2ClassInput) {
-        t2ClassInput.value = `৮ম-${firstSection}`;
     }
 
     // Ranks Calculation (based on sum of Half-Yearly marks)
@@ -376,6 +368,27 @@ function parseWorksheet(sheet) {
         secStudents.forEach((st, idx) => {
             st.rankSection = idx + 1;
         });
+
+        // Compute section-wise highest marks per subject
+        let secHighest = {};
+        subjectsMap.forEach(subj => {
+            let ctMax = 0, hyMax = 0;
+            let hasCTData = false, hasHYData = false;
+            secStudents.forEach(st => {
+                let stSubj = st.subjects[subj.name];
+                if (!stSubj) return;
+                if (stSubj.classTest.obtained !== null) {
+                    hasCTData = true;
+                    if (stSubj.classTest.obtained > ctMax) ctMax = stSubj.classTest.obtained;
+                }
+                if (stSubj.halfYearly.obtained !== null) {
+                    hasHYData = true;
+                    if (stSubj.halfYearly.obtained > hyMax) hyMax = stSubj.halfYearly.obtained;
+                }
+            });
+            secHighest[subj.name] = { ct: ctMax, hy: hyMax, hasCT: hasCTData, hasHY: hasHYData };
+        });
+        workbookData.sectionHighest[sec] = secHighest;
     });
 
     // Write calculated data into the 4 last columns (Col Y=24, Z=25, AA=26, AB=27) of the raw worksheet
@@ -437,7 +450,7 @@ function showProcessingStatus(success, errorMsg = '') {
         return;
     }
 
-    let subjChips = workbookData.subjects.map(s => `<span class="subject-chip">✓ ${s.name} (Max Obt: ${toBn(s.classTest.highestObtained)}/${toBn(s.halfYearly.highestObtained)})</span>`).join('');
+    let subjChips = workbookData.subjects.map(s => `<span class="subject-chip">✓ ${s.name}</span>`).join('');
 
     statusContent.innerHTML = `
         <div class="status-item success">
@@ -464,7 +477,11 @@ function showProcessingStatus(success, errorMsg = '') {
         `----------------------------------------`
     ];
     workbookData.subjects.forEach(s => {
-        diagLines.push(`${s.name}: Highest CT=${s.classTest.highestObtained} | Highest HY=${s.halfYearly.highestObtained} (Pass Mark=${s.halfYearly.passMark})`);
+        diagLines.push(`বিষয়: ${s.name} (Pass Mark=${s.halfYearly.passMark})`);
+        workbookData.sections.forEach(sec => {
+            const sh = (workbookData.sectionHighest[sec] || {})[s.name] || {};
+            diagLines.push(`  শাখা ${sec}: Highest CT=${sh.hasCT ? sh.ct : '—'} | Highest HY=${sh.hasHY ? sh.hy : '—'}`);
+        });
     });
     diagContent.textContent = diagLines.join('\n');
 }
@@ -496,7 +513,7 @@ function searchStudent() {
     const t1Name = document.getElementById('teacher1-name-input').value.trim();
     const t1Class = document.getElementById('teacher1-class-input').value.trim();
     const t2Name = document.getElementById('teacher2-name-input').value.trim();
-    const t2Class = document.getElementById('teacher2-class-input').value.trim();
+    const asstHeadName = document.getElementById('asst-head-name-input').value.trim();
 
     const errorDiv = document.getElementById('search-error');
     const marksheetSec = document.getElementById('marksheet-section');
@@ -511,7 +528,7 @@ function searchStudent() {
     }
 
     if (!t1Name || !t2Name) {
-        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>উভয় শ্রেণী শিক্ষকের নাম</strong> পূরণ করুন।';
+        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>শ্রেণী শিক্ষক ও প্রস্তুতকারকের নাম</strong> পূরণ করুন।';
         errorDiv.classList.remove('hidden');
         marksheetSec.classList.add('hidden');
         
@@ -547,7 +564,7 @@ function searchStudent() {
     sectionTitle.textContent = `মার্কশিট — ${found.name} (রোল: ${found.roll}, শাখা: ${found.section})`;
 
     const display = document.getElementById('marksheet-display');
-    display.innerHTML = generateSingleMarksheetHTML(found, t1Name, t1Class, t2Name, t2Class);
+    display.innerHTML = generateSingleMarksheetHTML(found, t1Name, t1Class, t2Name, asstHeadName);
 
     marksheetSec.classList.remove('hidden');
     marksheetSec.scrollIntoView({ behavior: 'smooth' });
@@ -593,14 +610,14 @@ function viewAllSectionStudents() {
     sectionTitle.textContent = `শাখা ${selectedSec}-এর সকল শিক্ষার্থীদের মার্কশিট (${secStudents.length} জন)`;
 
     const display = document.getElementById('marksheet-display');
-    display.innerHTML = secStudents.map(st => generateSingleMarksheetHTML(st, t1Name, t1Class, t2Name, t2Class)).join('');
+    display.innerHTML = secStudents.map(st => generateSingleMarksheetHTML(st, t1Name, t1Class, t2Name, asstHeadName)).join('');
 
     marksheetSec.classList.remove('hidden');
     marksheetSec.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Generate Marksheet HTML for a student
-function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class = '৬ষ্ঠ', teacher2Name = '', teacher2Class = '৮ম') {
+function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class = '৬ষ্ঠ', teacher2Name = '', asstHeadName = '') {
     let totalSubjs = workbookData.subjects.length;
     let rankStr = getBengaliRankStr(student.rankSection);
     let classTitle = workbookData.className || '৬ষ্ঠ';
@@ -616,9 +633,11 @@ function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class =
         };
 
         let serialBn = toBn(idx + 1);
-        
-        let ctHighestBn = toBn(subj.classTest.highestObtained || 0);
-        let hyHighestBn = toBn(subj.halfYearly.highestObtained || 0);
+
+        // Section-specific highest marks
+        const secHighest = (workbookData.sectionHighest[student.section] || {})[subj.name] || { ct: 0, hy: 0, hasCT: false, hasHY: false };
+        let ctHighestBn = secHighest.hasCT ? toBn(secHighest.ct) : '—';
+        let hyHighestBn = secHighest.hasHY ? toBn(secHighest.hy) : '—';
 
         let ctVal = stSubj.classTest.obtained;
         let hyVal = stSubj.halfYearly.obtained;
@@ -737,7 +756,7 @@ function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class =
                         <th rowspan="2" style="width: 26%;">বিষয় এর নাম</th>
                         <th colspan="2" style="width: 20%;">শ্রেণীতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
                         <th colspan="3" style="width: 29%;">প্রাপ্ত নম্বর</th>
-                        <th rowspan="2" style="width: 9%;">অকৃতকার্য বিষয়<br>(পরীক্ষায়)</th>
+                        <th rowspan="2" style="width: 9%;">অকৃতকার্য বিষয়<br>(অর্ধবাষিক)</th>
                         <th rowspan="2" style="width: 9%;">মেধাক্রম</th>
                     </tr>
                     <tr>
@@ -767,11 +786,11 @@ function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class =
                 <div class="pm-sig-box">
                     <div class="pm-sig-line"></div>
                     <div class="pm-sig-name">${t2}</div>
-                    <div class="pm-sig-title">শ্রেণী শিক্ষক (${teacher2Class})</div>
+                    <div class="pm-sig-title">সহকারী শিক্ষক</div>
                 </div>
                 <div class="pm-sig-box">
                     <div class="pm-sig-line"></div>
-                    <div class="pm-sig-name">রোমানা আক্তার</div>
+                    <div class="pm-sig-name">${asstHeadName || '—'}</div>
                     <div class="pm-sig-title">সহকারী প্রধান শিক্ষক</div>
                 </div>
                 <div class="pm-sig-box">

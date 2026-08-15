@@ -290,6 +290,8 @@ html, body {
     font-family: var(--font-bengali);
     font-size: 0.94rem;
     outline: none;
+    width: 100%;
+    min-width: 0;
 }
 .form-group input:focus, .form-select:focus { border-color: var(--accent-indigo); background: rgba(99, 102, 241, 0.08); }
 .form-select option { background: #0f172a; color: #fff; }
@@ -598,7 +600,7 @@ html, body {
 /* Teacher Input Layout */
 .teacher-input-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
 }
 .teacher-pair-box {
@@ -606,6 +608,8 @@ html, body {
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--radius-sm);
     padding: 14px 16px;
+    min-width: 0; /* prevent grid blowout */
+    overflow: hidden;
 }
 .teacher-pair-label {
     font-size: 0.85rem;
@@ -614,6 +618,22 @@ html, body {
     margin-bottom: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding-bottom: 4px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Static designation badge (non-editable field) */
+.static-designation {
+    padding: 10px 14px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-sm);
+    color: #a5b4fc;
+    font-size: 0.92rem;
+    font-weight: 600;
+    font-family: var(--font-bengali);
+    word-break: break-word;
 }
 
 
@@ -639,6 +659,13 @@ html, body {
     margin-bottom: 12px;
     text-align: center;
     font-weight: 500;
+}
+
+/* Tablet: collapse 3-col teacher grid to 2-col */
+@media (max-width: 900px) {
+    .teacher-input-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 /* Responsive adjustments */

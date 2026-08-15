@@ -114,14 +114,16 @@ html, body {
     margin-bottom: 22px;
     padding-bottom: 14px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-wrap: wrap;
 }
-.card-header h2 { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); flex: 1; }
+.card-header h2 { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); flex: 1; min-width: 0; }
 .step-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 30px;
     height: 30px;
+    min-width: 30px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--accent-indigo), var(--accent-teal));
     font-size: 0.85rem;
@@ -131,14 +133,16 @@ html, body {
 
 .actions-group {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     margin-left: auto;
+    flex-shrink: 0;
 }
 
 /* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 10px 20px;
     border: none;
@@ -149,6 +153,7 @@ html, body {
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
+    text-align: center;
 }
 .btn-primary {
     background: linear-gradient(135deg, var(--accent-indigo), #4338ca);
@@ -661,6 +666,31 @@ html, body {
     .mobile-scroll-indicator {
         display: flex;
     }
+    /* Card header actions stack below title on medium mobile */
+    .card-header {
+        row-gap: 10px;
+    }
+    .actions-group {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+    .actions-group .btn {
+        flex: 1;
+        font-size: 0.85rem;
+        padding: 9px 12px;
+        white-space: normal;
+        word-break: keep-all;
+    }
+    /* Download Excel button wraps long text */
+    #download-excel-btn {
+        white-space: normal;
+        word-break: keep-all;
+        line-height: 1.4;
+        padding: 10px 16px;
+        height: auto;
+        min-height: 44px;
+    }
 }
 
 /* Extra small devices / Mobile optimizations */
@@ -670,30 +700,57 @@ html, body {
         gap: 16px;
     }
     .card {
-        padding: 16px 14px;
+        padding: 16px 12px;
         border-radius: 10px;
     }
     .card-header {
         margin-bottom: 16px;
         padding-bottom: 10px;
-        gap: 10px;
+        gap: 8px;
+        row-gap: 10px;
     }
     .card-header h2 {
-        font-size: 1.05rem;
+        font-size: 1rem;
     }
     .step-badge {
         width: 26px;
         height: 26px;
+        min-width: 26px;
         font-size: 0.8rem;
     }
+    /* Stack actions-group buttons on very small screens */
+    .actions-group {
+        width: 100%;
+        margin-left: 0;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .actions-group .btn {
+        width: 100%;
+        font-size: 0.88rem;
+        padding: 10px 14px;
+        white-space: normal;
+        word-break: keep-all;
+        justify-content: center;
+    }
     .upload-zone {
-        padding: 24px 16px;
+        padding: 20px 12px;
     }
     .upload-icon {
         font-size: 2.2rem;
     }
     .upload-main {
         font-size: 0.9rem;
+    }
+    /* Download Excel button — compact on mobile */
+    #download-excel-btn {
+        white-space: normal;
+        word-break: keep-all;
+        line-height: 1.4;
+        padding: 10px 14px;
+        height: auto;
+        min-height: 44px;
+        font-size: 0.88rem;
     }
     .teacher-pair-box {
         padding: 12px;
@@ -702,12 +759,29 @@ html, body {
         font-size: 0.82rem;
         margin-bottom: 8px;
     }
+    /* Mode-box h3 shrink for small screens */
+    .mode-box h3 {
+        font-size: 0.9rem;
+        line-height: 1.35;
+    }
     .batch-btn-group {
         flex-direction: column;
         gap: 10px;
     }
     .batch-btn-group .btn {
         width: 100%;
+        font-size: 0.88rem;
+        padding: 10px 14px;
+    }
+    /* Single search button full-width */
+    .mode-box > .btn {
+        width: 100%;
+        white-space: normal;
+        word-break: keep-all;
+        font-size: 0.88rem;
+        padding: 10px 14px;
+        line-height: 1.4;
+        min-height: 44px;
     }
 }
 

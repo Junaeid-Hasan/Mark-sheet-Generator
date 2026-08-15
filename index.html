@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marksheet Generator | ছাত্র মার্কশিট জেনারেটর</title>
+    <meta name="description" content="Browser-based student marksheet generator for school exam results. Upload Excel file and generate individual or full section marksheets with PDF download.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-icon">📋</div>
+            <div class="header-text">
+                <h1>Student Marksheet Generator</h1>
+                <p>ছাত্র মার্কশিট জেনারেটর — সম্পূর্ণ ব্রাউজারে পরিচালিত</p>
+            </div>
+        </header>
+
+        <!-- Section 1: Excel Upload -->
+        <section class="card" id="upload-section">
+            <div class="card-header">
+                <span class="step-badge">১</span>
+                <h2>Excel ফাইল আপলোড</h2>
+            </div>
+
+            <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">
+                    <p class="upload-main">Excel ফাইল নির্বাচন করুন</p>
+                    <p class="upload-sub">result.xlsx বা অনুরূপ ফাইল (.xlsx, .xls)</p>
+                </div>
+                <input type="file" id="excel-file-input" accept=".xlsx,.xls" hidden>
+                <button class="btn btn-outline" onclick="document.getElementById('excel-file-input').click()">
+                    📂 ফাইল বেছে নিন
+                </button>
+            </div>
+
+            <div id="file-name-display" class="file-name-display hidden"></div>
+
+            <button class="btn btn-primary" id="process-btn" onclick="processExcel()" disabled>
+                ⚙️ Excel প্রসেস করুন
+            </button>
+
+            <!-- Status Panel -->
+            <div id="status-panel" class="status-panel hidden">
+                <div id="status-content"></div>
+                <div style="margin-top: 14px;">
+                    <button class="btn btn-success" id="download-excel-btn" onclick="downloadUpdatedExcel()">
+                        📊 আপডেট করা Excel ফাইল ডাউনলোড করুন (সর্বমোট, মেধাক্রম ও ফলাফলসহ)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Diagnostic Info -->
+            <div id="diagnostic-panel" class="diagnostic-panel hidden">
+                <div class="diagnostic-header" onclick="toggleDiagnostic()">
+                    <span>🔍 বিস্তারিত বিশ্লেষণ</span>
+                    <span id="diag-toggle-icon">▼</span>
+                </div>
+                <div id="diagnostic-content" class="diagnostic-content hidden"></div>
+            </div>
+        </section>
+
+        <!-- Section 2: Student & Section Search Options -->
+        <section class="card hidden" id="search-section">
+            <div class="card-header">
+                <span class="step-badge">২</span>
+                <h2>শিক্ষক তথ্য ও মার্কশিট জেনারেশন</h2>
+            </div>
+
+            <!-- Teachers & Class Input -->
+            <div class="teacher-input-grid" style="margin-bottom: 20px;">
+                <div class="teacher-pair-box">
+                    <div class="teacher-pair-label">শ্রেণী শিক্ষক ১</div>
+                    <div class="form-row" style="gap: 12px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 0.6;">
+                            <label for="teacher1-class-input">শ্রেণী</label>
+                            <input type="text" id="teacher1-class-input" placeholder="যেমন: ৬ষ্ঠ-A" autocomplete="off" value="৬ষ্ঠ-A">
+                        </div>
+                        <div class="form-group">
+                            <label for="teacher1-name-input">নাম</label>
+                            <input type="text" id="teacher1-name-input" placeholder="শ্রেণী শিক্ষক ১ এর নাম লিখুন" autocomplete="off" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="teacher-pair-box">
+                    <div class="teacher-pair-label">শ্রেণী শিক্ষক ২</div>
+                    <div class="form-row" style="gap: 12px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 0.6;">
+                            <label for="teacher2-class-input">শ্রেণী</label>
+                            <input type="text" id="teacher2-class-input" placeholder="যেমন: ৮ম-A" autocomplete="off" value="৮ম-A">
+                        </div>
+                        <div class="form-group">
+                            <label for="teacher2-name-input">নাম</label>
+                            <input type="text" id="teacher2-name-input" placeholder="শ্রেণী শিক্ষক ২ এর নাম লিখুন" autocomplete="off" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Buttons / Search Modes -->
+            <div class="search-mode-container">
+                <div class="mode-box">
+                    <h3>🔎 একক শিক্ষার্থীর মার্কশিট</h3>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="roll-input">রোল নম্বর</label>
+                            <input type="text" id="roll-input" placeholder="যেমন: 01 বা C-1" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="section-input">শাখা (Section)</label>
+                            <input type="text" id="section-input" placeholder="যেমন: A, B, C..." autocomplete="off" list="section-list">
+                            <datalist id="section-list"></datalist>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="name-input">ছাত্রের নাম (ঐচ্ছিক)</label>
+                        <input type="text" id="name-input" placeholder="নাম দিয়েও খোঁজা যাবে" autocomplete="off">
+                    </div>
+                    <button class="btn btn-primary" onclick="searchStudent()">
+                        🔍 একক শিক্ষার্থীর মার্কশিট দেখুন
+                    </button>
+                </div>
+
+                <div class="mode-box batch-box">
+                    <h3>📚 শাখাভিত্তিক সকল শিক্ষার্থীর মার্কশিট (Batch Print)</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 6px 0 12px;">
+                        নির্দিষ্ট একটি শাখার সব শিক্ষার্থীর মার্কশিট একসাথে দেখুন বা ডাউনলোড করুন:
+                    </p>
+                    <div class="form-group">
+                        <label for="batch-section-select">শাখা নির্বাচন করুন</label>
+                        <select id="batch-section-select" class="form-select"></select>
+                    </div>
+                    <div class="batch-btn-group">
+                        <button class="btn btn-outline" onclick="viewAllSectionStudents()">
+                            👁️ সকল শিক্ষার্থী দেখুন
+                        </button>
+                        <button class="btn btn-success" onclick="downloadAllSectionPDF()">
+                            📥 পুরো শাখার PDF ডাউনলোড
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="search-error" class="search-error hidden"></div>
+        </section>
+
+        <!-- Section 3: Marksheet Display -->
+        <section class="card hidden" id="marksheet-section">
+            <div class="card-header">
+                <span class="step-badge">৩</span>
+                <h2 id="marksheet-section-title">মার্কশিট</h2>
+                <div class="actions-group">
+                    <button class="btn btn-outline" onclick="window.print()">
+                        🖨️ প্রিন্ট করুন
+                    </button>
+                    <button class="btn btn-success download-btn" id="pdf-download-btn" onclick="downloadPDF()">
+                        📥 PDF ডাউনলোড
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Scroll Indicator (only visible on mobile screens) -->
+            <div class="mobile-scroll-indicator">
+                <span>📱 পুরো মার্কশিট দেখতে ডানে-বামে স্ক্রোল (Swipe) করুন</span>
+            </div>
+
+            <div class="marksheet-wrapper">
+                <div id="marksheet-display"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- SheetJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- html2canvas for Bengali font PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF AutoTable plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>

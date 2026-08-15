@@ -1,0 +1,727 @@
+/* ============================================================
+   MARKSHEET GENERATOR — Global Styles & Document Theme
+   ============================================================ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-dark:          #0b1329;
+    --bg-card:          rgba(15, 23, 42, 0.85);
+    --bg-card-border:    rgba(99, 102, 241, 0.2);
+    --accent-blue:      #4f46e5;
+    --accent-indigo:    #6366f1;
+    --accent-teal:      #06b6d4;
+    --accent-green:     #10b981;
+    --accent-amber:     #f59e0b;
+    --accent-red:       #ef4444;
+    --text-primary:     #f8fafc;
+    --text-secondary:   #94a3b8;
+    --text-muted:       #64748b;
+    --radius:           14px;
+    --radius-sm:        8px;
+    --shadow:           0 12px 36px rgba(0, 0, 0, 0.5);
+    --font-bengali:     'Hind Siliguri', 'Kalpurush', sans-serif;
+    --font-latin:       'Inter', sans-serif;
+}
+
+html, body {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-bengali);
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+/* Background Orbs */
+.bg-orbs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.15;
+    animation: float 14s ease-in-out infinite;
+}
+.orb-1 { width: 500px; height: 500px; background: var(--accent-indigo); top: -100px; left: -100px; }
+.orb-2 { width: 450px; height: 450px; background: var(--accent-teal); bottom: 5%; right: -80px; animation-delay: 5s; }
+.orb-3 { width: 350px; height: 350px; background: #8b5cf6; top: 45%; left: 40%; animation-delay: 9s; }
+@keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-25px) scale(1.04); }
+}
+
+/* Layout */
+.app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* App Header */
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px 30px;
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+}
+.header-icon { font-size: 2.6rem; line-height: 1; }
+.header-text h1 {
+    font-family: var(--font-latin);
+    font-size: 1.45rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #818cf8, var(--accent-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.header-text p { color: var(--text-secondary); font-size: 0.88rem; margin-top: 2px; }
+
+/* Cards */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+}
+.card.hidden { display: none; }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.card-header h2 { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); flex: 1; }
+.step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-indigo), var(--accent-teal));
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.actions-group {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-bengali);
+    font-size: 0.92rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-indigo), #4338ca);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 0.96rem;
+    margin-top: 10px;
+}
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(99, 102, 241, 0.5);
+}
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    color: #818cf8;
+}
+.btn-outline:hover { background: rgba(99, 102, 241, 0.12); }
+.btn-success {
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+}
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5); }
+
+/* Upload Zone */
+.upload-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 32px 24px;
+    border: 2px dashed rgba(99, 102, 241, 0.35);
+    border-radius: var(--radius);
+    background: rgba(99, 102, 241, 0.04);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 14px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent-indigo);
+    background: rgba(99, 102, 241, 0.1);
+}
+.upload-icon { font-size: 2.8rem; line-height: 1; }
+.upload-main { font-size: 0.98rem; font-weight: 500; }
+.upload-sub { font-size: 0.82rem; color: var(--text-secondary); }
+
+.file-name-display {
+    padding: 10px 16px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radius-sm);
+    color: var(--accent-green);
+    font-size: 0.88rem;
+    margin-bottom: 4px;
+}
+.file-name-display.hidden { display: none; }
+
+/* Status Panel */
+.status-panel {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.status-panel.hidden { display: none; }
+.status-item { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; font-size: 0.88rem; }
+.status-item.success { color: var(--accent-green); }
+.status-item.error   { color: var(--accent-red); }
+.status-item.info    { color: #818cf8; }
+
+.subjects-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.subject-chip {
+    padding: 3px 10px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #a5b4fc;
+}
+
+/* Diagnostic Panel */
+.diagnostic-panel { margin-top: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); }
+.diagnostic-panel.hidden { display: none; }
+.diagnostic-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; cursor: pointer; background: rgba(255,255,255,0.03);
+    font-size: 0.85rem; color: var(--text-secondary); user-select: none;
+}
+.diagnostic-content {
+    padding: 14px; font-size: 0.8rem; color: var(--text-secondary);
+    font-family: monospace; background: rgba(0,0,0,0.25); max-height: 250px; overflow-y: auto;
+}
+.diagnostic-content.hidden { display: none; }
+
+/* Dual Mode Search Layout */
+.search-mode-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.mode-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.mode-box h3 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+.form-group input, .form-select {
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-bengali);
+    font-size: 0.94rem;
+    outline: none;
+}
+.form-group input:focus, .form-select:focus { border-color: var(--accent-indigo); background: rgba(99, 102, 241, 0.08); }
+.form-select option { background: #0f172a; color: #fff; }
+
+.batch-btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+.batch-btn-group .btn { flex: 1; justify-content: center; padding: 11px 12px; font-size: 0.88rem; }
+
+.search-error {
+    padding: 12px 16px; background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-sm);
+    color: var(--accent-red); font-size: 0.88rem; margin-top: 14px;
+}
+.search-error.hidden { display: none; }
+
+/* Spinner */
+.spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   AUTHENTIC SCHOOL MARKSHEET PAPER STYLING (EXACT IMAGE FORMAT)
+   ============================================================ */
+
+.paper-marksheet-container {
+    background: #ffffff;
+    color: #000000;
+    font-family: 'Noto Sans Bengali', 'Anek Bangla', 'Tiro Bangla', 'Kalpurush', sans-serif;
+    padding: 24px 30px 30px;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 840px;
+    margin: 0 auto 30px auto;
+    box-sizing: border-box;
+    page-break-after: always;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Paper Header */
+.pm-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
+.pm-header-center {
+    flex: 1;
+    text-align: center;
+    padding-right: 15px;
+}
+
+.pm-school-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+}
+
+.pm-school-sub1 {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #111;
+    margin-top: 2px;
+}
+
+.pm-school-sub2 {
+    font-size: 0.83rem;
+    color: #222;
+    margin-top: 1px;
+}
+
+.pm-school-contact {
+    font-size: 0.8rem;
+    color: #333;
+    margin-top: 2px;
+}
+
+/* Grade Table (Top Right Corner) */
+.pm-grade-table-wrap {
+    flex-shrink: 0;
+}
+
+.pm-grade-table {
+    border-collapse: collapse;
+    border: 1.5px solid #000;
+    font-size: 0.72rem;
+    font-family: var(--font-latin);
+    text-align: center;
+    color: #000;
+    background: #fff;
+}
+
+.pm-grade-table th, .pm-grade-table td {
+    border: 1px solid #000;
+    padding: 1.5px 7px;
+    line-height: 1.15;
+}
+
+.pm-grade-table th {
+    font-weight: 700;
+    background: #fff;
+}
+
+.pm-grade-table td {
+    font-weight: 500;
+}
+
+/* Title Box */
+.pm-title-wrap {
+    text-align: center;
+    margin: 14px 0 16px;
+}
+
+.pm-title-box {
+    display: inline-block;
+    border: 1.5px solid #000;
+    padding: 3px 24px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #000;
+    border-radius: 2px;
+    background: #fff;
+}
+
+/* Student Metadata (2 Columns) */
+.pm-student-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 4px;
+    font-size: 1rem;
+    color: #000;
+    line-height: 1.8;
+}
+
+.pm-meta-left, .pm-meta-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.pm-meta-row {
+    display: flex;
+    gap: 8px;
+}
+
+.pm-meta-label {
+    font-weight: 700;
+    min-width: 95px;
+}
+
+.pm-meta-value {
+    font-weight: 600;
+}
+
+/* Marks Table */
+.pm-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5px solid #000000;
+    font-size: 0.88rem;
+    color: #000000;
+    margin-bottom: 0;
+}
+
+.pm-table th, .pm-table td {
+    border: 1px solid #000000;
+    padding: 5px 6px;
+    text-align: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+    font-family: 'Noto Sans Bengali', 'Anek Bangla', sans-serif;
+}
+
+.pm-table th {
+    font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    font-size: 0.85rem;
+    line-height: 1.25;
+}
+
+.pm-table td {
+    font-size: 0.92rem;
+    height: 28px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.pm-table td.subject-name-td {
+    text-align: center;
+    font-weight: 600;
+    padding-left: 8px;
+}
+
+.pm-table tr.failed-subject-row {
+    background-color: #fff8f8;
+}
+
+.failed-mark {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.failed-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-family: var(--font-latin);
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+    border-radius: 3px;
+    padding: 0 4px;
+    margin-left: 3px;
+    vertical-align: middle;
+}
+
+.pm-table .rank-td {
+    font-weight: 700;
+    font-size: 1.15rem;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.pm-table .failed-td {
+    font-weight: 600;
+    font-size: 1rem;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.pm-table .total-row-label {
+    font-weight: 700;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.pm-table .total-row-value {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* Clean Signatures Section (No Doodle Scribbles) */
+.pm-signatures {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 55px;
+    padding: 0 4px;
+    text-align: center;
+}
+
+.pm-sig-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.pm-sig-line {
+    width: 90%;
+    height: 1.2px;
+    background: #000;
+    margin-bottom: 6px;
+}
+
+.pm-sig-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #000;
+    line-height: 1.2;
+}
+
+.pm-sig-title {
+    font-size: 0.78rem;
+    color: #222;
+    margin-top: 1px;
+}
+
+/* Print CSS */
+@media print {
+    body { background: #fff; color: #000; }
+    .bg-orbs, .app-header, #upload-section, #search-section, .card-header { display: none !important; }
+    .app-container { max-width: 100%; padding: 0; margin: 0; }
+    .card { background: none; border: none; padding: 0; box-shadow: none; }
+    .paper-marksheet-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 15px 20px;
+        max-width: 100%;
+        page-break-after: always;
+    }
+}
+
+
+/* Teacher Input Layout */
+.teacher-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.teacher-pair-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+}
+.teacher-pair-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-indigo);
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 4px;
+}
+
+
+/* Marksheet Scroll Wrapper & Mobile Indicator */
+.marksheet-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 0;
+    margin-top: 5px;
+}
+.mobile-scroll-indicator {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px dashed rgba(99, 102, 241, 0.35);
+    border-radius: var(--radius-sm);
+    color: #a5b4fc;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-header { 
+        padding: 18px 20px; 
+        flex-direction: column; 
+        text-align: center; 
+        gap: 12px;
+    }
+    .header-icon {
+        font-size: 2.2rem;
+    }
+    .card { 
+        padding: 20px 18px; 
+    }
+    .search-mode-container, .teacher-input-grid { 
+        grid-template-columns: 1fr; 
+        gap: 16px;
+    }
+    .form-row { 
+        grid-template-columns: 1fr; 
+        gap: 12px;
+    }
+    .mobile-scroll-indicator {
+        display: flex;
+    }
+}
+
+/* Extra small devices / Mobile optimizations */
+@media (max-width: 480px) {
+    .app-container {
+        padding: 12px 8px 40px;
+        gap: 16px;
+    }
+    .card {
+        padding: 16px 14px;
+        border-radius: 10px;
+    }
+    .card-header {
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        gap: 10px;
+    }
+    .card-header h2 {
+        font-size: 1.05rem;
+    }
+    .step-badge {
+        width: 26px;
+        height: 26px;
+        font-size: 0.8rem;
+    }
+    .upload-zone {
+        padding: 24px 16px;
+    }
+    .upload-icon {
+        font-size: 2.2rem;
+    }
+    .upload-main {
+        font-size: 0.9rem;
+    }
+    .teacher-pair-box {
+        padding: 12px;
+    }
+    .teacher-pair-label {
+        font-size: 0.82rem;
+        margin-bottom: 8px;
+    }
+    .batch-btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .batch-btn-group .btn {
+        width: 100%;
+    }
+}
+
+/* Print CSS overrides */
+@media print {
+    .paper-marksheet-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 15px 20px !important;
+        page-break-after: always;
+    }
+    .mobile-scroll-indicator {
+        display: none !important;
+    }
+}

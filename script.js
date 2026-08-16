@@ -571,12 +571,16 @@ function searchStudent() {
 }
 
 // View All Students in Section
+// Returns true on success (rendered), false if validation failed / nothing to show.
+let currentBatchStudents = [];
+
 function viewAllSectionStudents() {
-    const selectedSec = document.getElementById('batch-section-select').value;
+    const sectionSelect = document.getElementById('batch-section-select');
+    const selectedSec = sectionSelect ? sectionSelect.value : '';
     const t1Name = document.getElementById('teacher1-name-input').value.trim();
     const t1Class = document.getElementById('teacher1-class-input').value.trim();
     const t2Name = document.getElementById('teacher2-name-input').value.trim();
-    const t2Class = document.getElementById('teacher2-class-input').value.trim();
+    const asstHeadName = document.getElementById('asst-head-name-input').value.trim();
     const errorDiv = document.getElementById('search-error');
     const marksheetSec = document.getElementById('marksheet-section');
     const sectionTitle = document.getElementById('marksheet-section-title');
@@ -586,27 +590,34 @@ function viewAllSectionStudents() {
     if (!workbookData.students.length) {
         errorDiv.textContent = 'দয়া করে প্রথমে একটি Excel ফাইল আপলোড ও প্রসেস করুন।';
         errorDiv.classList.remove('hidden');
-        return;
+        return false;
+    }
+
+    if (!selectedSec) {
+        errorDiv.textContent = 'দয়া করে একটি শাখা নির্বাচন করুন।';
+        errorDiv.classList.remove('hidden');
+        return false;
     }
 
     if (!t1Name || !t2Name) {
-        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>উভয় শ্রেণী শিক্ষকের নাম</strong> পূরণ করুন।';
+        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>শ্রেণী শিক্ষক ও প্রস্তুতকারকের নাম</strong> পূরণ করুন।';
         errorDiv.classList.remove('hidden');
         marksheetSec.classList.add('hidden');
-        
+
         if (!t1Name) document.getElementById('teacher1-name-input').focus();
         else if (!t2Name) document.getElementById('teacher2-name-input').focus();
-        return;
+        return false;
     }
 
     const secStudents = workbookData.students.filter(s => s.section === selectedSec);
     if (!secStudents.length) {
-        errorDiv.textContent = `শাখা ${selectedSec}-এ কোনো শিক্ষার্থী পাওয়া যায়নি।`;
+        errorDiv.textContent = `শাখা ${selectedSec}-এ কোনো শিক্ষার্থী পাওয়া যায়নি।`;
         errorDiv.classList.remove('hidden');
-        return;
+        return false;
     }
 
     currentMode = 'batch';
+    currentBatchStudents = secStudents;
     sectionTitle.textContent = `শাখা ${selectedSec}-এর সকল শিক্ষার্থীদের মার্কশিট (${secStudents.length} জন)`;
 
     const display = document.getElementById('marksheet-display');
@@ -614,6 +625,7 @@ function viewAllSectionStudents() {
 
     marksheetSec.classList.remove('hidden');
     marksheetSec.scrollIntoView({ behavior: 'smooth' });
+    return true;
 }
 
 // Generate Marksheet HTML for a student
@@ -861,63 +873,146 @@ async function downloadSinglePDF() {
     }
 }
 
-// Download All Section Students PDF in a single compiled multi-page PDF
-async function downloadAllSectionPDF() {
-    const selectedSec = document.getElementById('batch-section-select').value;
-    const secStudents = workbookData.students.filter(s => s.section === selectedSec);
+// Progress bar helpers for batch PDF download
+function showBatchProgress() {
+    const container = document.getElementById('batch-progress-container');
+    if (container) container.classList.remove('hidden');
+}
 
-    if (!secStudents.length) {
-        alert(`শাখা ${selectedSec}-এ কোনো শিক্ষার্থী পাওয়া যায়নি।`);
+function hideBatchProgress() {
+    const container = document.getElementById('batch-progress-container');
+    if (container) container.classList.add('hidden');
+}
+
+function updateBatchProgress(done, total, label) {
+    const fill = document.getElementById('batch-progress-bar-fill');
+    const text = document.getElementById('batch-progress-text');
+    const percentEl = document.getElementById('batch-progress-percent');
+    const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    if (fill) fill.style.width = percent + '%';
+    if (percentEl) percentEl.textContent = toBn(percent) + '%';
+
+    if (text) {
+        if (done < total) {
+            text.textContent = `ডাউনলোড হচ্ছে: ${label} (${toBn(done + 1)}/${toBn(total)})`;
+        } else {
+            text.textContent = `✅ সম্পন্ন! মোট ${toBn(total)} টি মার্কশিট ডাউনলোড হয়েছে।`;
+        }
+    }
+}
+
+// Small delay helper so the browser has time to process each download
+// before the next one starts (avoids browsers silently blocking rapid downloads)
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Download All Section Students' PDFs one-by-one (separate file per student)
+// with a live progress bar showing current progress.
+async function downloadAllSectionPDF() {
+    // Render (and validate) the section's marksheets first
+    const rendered = viewAllSectionStudents();
+    if (!rendered) return;
+
+    const selectedSec = document.getElementById('batch-section-select').value;
+    const secStudents = currentBatchStudents;
+
+    if (!secStudents || !secStudents.length) {
+        alert(`শাখা ${selectedSec}-এ কোনো শিক্ষার্থী পাওয়া যায়নি।`);
         return;
     }
 
-    viewAllSectionStudents();
+    // Give the DOM a moment to fully paint the newly rendered marksheet cards
+    await delay(150);
 
     const cardElems = document.querySelectorAll('.marksheet-card-item');
-    if (!cardElems.length) return;
-
-    const downloadBtn = document.getElementById('pdf-download-btn');
-    const origText = downloadBtn ? downloadBtn.innerHTML : '';
-    if (downloadBtn) {
-        downloadBtn.disabled = true;
-        downloadBtn.innerHTML = `<span class="spinner"></span> পুরো শাখার PDF তৈরি হচ্ছে (${secStudents.length} জন)...`;
+    if (!cardElems.length) {
+        alert('মার্কশিট রেন্ডার করতে সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+        return;
     }
+
+    const batchDownloadBtn = document.getElementById('batch-download-btn');
+    const batchViewBtn = document.getElementById('batch-view-btn');
+    const pdfDownloadBtn = document.getElementById('pdf-download-btn');
+    const origBatchBtnText = batchDownloadBtn ? batchDownloadBtn.innerHTML : '';
+
+    if (batchDownloadBtn) {
+        batchDownloadBtn.disabled = true;
+        batchDownloadBtn.innerHTML = `<span class="spinner"></span> প্রসেসিং হচ্ছে...`;
+    }
+    if (batchViewBtn) batchViewBtn.disabled = true;
+    if (pdfDownloadBtn) pdfDownloadBtn.disabled = true;
+
+    const total = cardElems.length;
+    showBatchProgress();
+    updateBatchProgress(0, total, secStudents[0] ? secStudents[0].name : '');
+
+    let successCount = 0;
+    let failedStudents = [];
 
     try {
         const jsPDFLib = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-        const pdf = new jsPDFLib({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: 'a4'
-        });
-        const pdfWidth = pdf.internal.pageSize.getWidth();
 
         for (let i = 0; i < cardElems.length; i++) {
             const elem = cardElems[i];
-            const canvas = await html2canvas(elem, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff'
-            });
+            const student = secStudents[i] || null;
+            const label = student ? student.name : `#${i + 1}`;
 
-            const imgData = canvas.toDataURL('image/png');
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            updateBatchProgress(i, total, label);
 
-            if (i > 0) pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, 5, pdfWidth, pdfHeight);
+            try {
+                const canvas = await html2canvas(elem, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDFLib({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 5, pdfWidth, pdfHeight);
+
+                const fileName = getPDFFileName(student);
+                pdf.save(fileName);
+                successCount++;
+            } catch (innerErr) {
+                console.error(`PDF generation failed for student index ${i}:`, innerErr);
+                failedStudents.push(label);
+            }
+
+            updateBatchProgress(i + 1, total, label);
+
+            // Small pause between downloads so the browser can process each
+            // save before the next one starts (also avoids popup/download blocking)
+            if (i < cardElems.length - 1) {
+                await delay(600);
+            }
         }
 
-        let classNum = getCleanClassNumber();
-        let fileName = `Section_${selectedSec}_${classNum}_All_Students.pdf`;
-        pdf.save(fileName);
+        if (failedStudents.length) {
+            alert(`${successCount} টি মার্কশিট সফলভাবে ডাউনলোড হয়েছে।\nনিম্নলিখিত ${failedStudents.length} জনের মার্কশিট তৈরি করতে সমস্যা হয়েছে:\n${failedStudents.join(', ')}`);
+        }
     } catch (err) {
         console.error('Batch PDF error:', err);
-        alert('Batch PDF তৈরি করতে সমস্যা হয়েছে: ' + err.message);
+        alert('Batch PDF তৈরি করতে সমস্যা হয়েছে: ' + err.message);
     } finally {
-        if (downloadBtn) {
-            downloadBtn.disabled = false;
-            downloadBtn.innerHTML = origText;
+        if (batchDownloadBtn) {
+            batchDownloadBtn.disabled = false;
+            batchDownloadBtn.innerHTML = origBatchBtnText;
         }
+        if (batchViewBtn) batchViewBtn.disabled = false;
+        if (pdfDownloadBtn) pdfDownloadBtn.disabled = false;
+
+        // Keep the "done" state visible briefly, then hide the progress bar
+        setTimeout(hideBatchProgress, 2500);
     }
 }

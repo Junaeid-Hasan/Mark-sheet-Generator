@@ -184,9 +184,11 @@ function parseWorksheet(sheet) {
     const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:Z500');
     
     // Metadata
-    workbookData.schoolName = String(getCellValue(sheet, 1, 0) || 'সেরাজনগর মুনছর আলী পাইলট মডেল সরকারী উচ্চ বিদ্যালয়').trim();
+    workbookData.schoolName = String(getCellValue(sheet, 1, 0) || 'সেরাজনগর মুনছর আলী পাইলট মডেল সরকারি উচ্চ বিদ্যালয়').trim();
     workbookData.examName = String(getCellValue(sheet, 3, 2) || 'অর্ধবাষিক মূল্যায়ন প্রতিবেদন-২০২৬').trim();
     let rawClass = String(getCellValue(sheet, 4, 2) || 'শ্রেণি-৬ষ্ঠ').trim();
+    // Strip either spelling variant ("শ্রেণি-" or the older "শ্রেণী-") that might appear
+    // as a prefix in the source Excel file, since we can't control how the sheet was authored.
     let cleanClass = rawClass.replace(/^শ্রেণি-?/i, '').replace(/^শ্রেণী-?/i, '').trim() || '৬ষ্ঠ';
     workbookData.className = cleanClass;
 
@@ -349,13 +351,6 @@ function parseWorksheet(sheet) {
     workbookData.students = students;
     workbookData.sections = Array.from(sectionSet).sort();
 
-    // Auto-populate teacher1 class input with detected class and section
-    const t1ClassInput = document.getElementById('teacher1-class-input');
-    const firstSection = workbookData.sections[0] || 'A';
-    if (t1ClassInput) {
-        t1ClassInput.value = `${cleanClass}-${firstSection}`;
-    }
-
     // Ranks Calculation (based on sum of Half-Yearly marks)
     let sortedOverall = [...students].sort((a, b) => b.totalObtained - a.totalObtained);
     sortedOverall.forEach((st, idx) => {
@@ -511,9 +506,9 @@ function searchStudent() {
     const sectionInput = document.getElementById('section-input').value.trim().toUpperCase();
     const nameInput = document.getElementById('name-input').value.trim();
     const t1Name = document.getElementById('teacher1-name-input').value.trim();
-    const t1Class = document.getElementById('teacher1-class-input').value.trim();
     const t2Name = document.getElementById('teacher2-name-input').value.trim();
     const asstHeadName = document.getElementById('asst-head-name-input').value.trim();
+    const examCommitteeName = document.getElementById('exam-committee-name-input').value.trim();
 
     const errorDiv = document.getElementById('search-error');
     const marksheetSec = document.getElementById('marksheet-section');
@@ -528,7 +523,7 @@ function searchStudent() {
     }
 
     if (!t1Name || !t2Name) {
-        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>শ্রেণী শিক্ষক ও প্রস্তুতকারকের নাম</strong> পূরণ করুন।';
+        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>শ্রেণি শিক্ষক ও ফলাফল প্রস্তুতকারীর নাম</strong> পূরণ করুন।';
         errorDiv.classList.remove('hidden');
         marksheetSec.classList.add('hidden');
         
@@ -564,7 +559,7 @@ function searchStudent() {
     sectionTitle.textContent = `মার্কশিট — ${found.name} (রোল: ${found.roll}, শাখা: ${found.section})`;
 
     const display = document.getElementById('marksheet-display');
-    display.innerHTML = generateSingleMarksheetHTML(found, t1Name, t1Class, t2Name, asstHeadName);
+    display.innerHTML = generateSingleMarksheetHTML(found, t1Name, t2Name, asstHeadName, examCommitteeName);
 
     marksheetSec.classList.remove('hidden');
     marksheetSec.scrollIntoView({ behavior: 'smooth' });
@@ -578,9 +573,9 @@ function viewAllSectionStudents() {
     const sectionSelect = document.getElementById('batch-section-select');
     const selectedSec = sectionSelect ? sectionSelect.value : '';
     const t1Name = document.getElementById('teacher1-name-input').value.trim();
-    const t1Class = document.getElementById('teacher1-class-input').value.trim();
     const t2Name = document.getElementById('teacher2-name-input').value.trim();
     const asstHeadName = document.getElementById('asst-head-name-input').value.trim();
+    const examCommitteeName = document.getElementById('exam-committee-name-input').value.trim();
     const errorDiv = document.getElementById('search-error');
     const marksheetSec = document.getElementById('marksheet-section');
     const sectionTitle = document.getElementById('marksheet-section-title');
@@ -600,7 +595,7 @@ function viewAllSectionStudents() {
     }
 
     if (!t1Name || !t2Name) {
-        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>শ্রেণী শিক্ষক ও প্রস্তুতকারকের নাম</strong> পূরণ করুন।';
+        errorDiv.innerHTML = '⚠️ অনুগ্রহ করে <strong>শ্রেণি শিক্ষক ও ফলাফল প্রস্তুতকারীর নাম</strong> পূরণ করুন।';
         errorDiv.classList.remove('hidden');
         marksheetSec.classList.add('hidden');
 
@@ -621,7 +616,7 @@ function viewAllSectionStudents() {
     sectionTitle.textContent = `শাখা ${selectedSec}-এর সকল শিক্ষার্থীদের মার্কশিট (${secStudents.length} জন)`;
 
     const display = document.getElementById('marksheet-display');
-    display.innerHTML = secStudents.map(st => generateSingleMarksheetHTML(st, t1Name, t1Class, t2Name, asstHeadName)).join('');
+    display.innerHTML = secStudents.map(st => generateSingleMarksheetHTML(st, t1Name, t2Name, asstHeadName, examCommitteeName)).join('');
 
     marksheetSec.classList.remove('hidden');
     marksheetSec.scrollIntoView({ behavior: 'smooth' });
@@ -629,7 +624,7 @@ function viewAllSectionStudents() {
 }
 
 // Generate Marksheet HTML for a student
-function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class = '৬ষ্ঠ', teacher2Name = '', asstHeadName = '') {
+function generateSingleMarksheetHTML(student, teacher1Name = '', teacher2Name = '', asstHeadName = '', examCommitteeName = '') {
     let totalSubjs = workbookData.subjects.length;
     let rankStr = getBengaliRankStr(student.rankSection);
     let classTitle = workbookData.className || '৬ষ্ঠ';
@@ -750,7 +745,7 @@ function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class =
                 </div>
                 <div class="pm-meta-right">
                     <div class="pm-meta-row">
-                        <span class="pm-meta-label">শ্রেণী :</span>
+                        <span class="pm-meta-label">শ্রেণি :</span>
                         <span class="pm-meta-value">${classTitle}</span>
                     </div>
                     <div class="pm-meta-row">
@@ -766,7 +761,7 @@ function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class =
                     <tr>
                         <th rowspan="2" style="width: 7%;">ক্রমিক<br>নং</th>
                         <th rowspan="2" style="width: 26%;">বিষয় এর নাম</th>
-                        <th colspan="2" style="width: 20%;">শ্রেণীতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
+                        <th colspan="2" style="width: 20%;">শ্রেণিতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
                         <th colspan="3" style="width: 29%;">প্রাপ্ত নম্বর</th>
                         <th rowspan="2" style="width: 9%;">অকৃতকার্য বিষয়<br>(অর্ধবাষিক)</th>
                         <th rowspan="2" style="width: 9%;">মেধাক্রম</th>
@@ -792,13 +787,18 @@ function generateSingleMarksheetHTML(student, teacher1Name = '', teacher1Class =
             <div class="pm-signatures">
                 <div class="pm-sig-box">
                     <div class="pm-sig-line"></div>
-                    <div class="pm-sig-name">${t1}</div>
-                    <div class="pm-sig-title">শ্রেণী শিক্ষক (${teacher1Class})</div>
+                    <div class="pm-sig-name">${examCommitteeName || '—'}</div>
+                    <div class="pm-sig-title">অভ্যন্তরীন পরীক্ষা কমিটি</div>
                 </div>
                 <div class="pm-sig-box">
                     <div class="pm-sig-line"></div>
                     <div class="pm-sig-name">${t2}</div>
-                    <div class="pm-sig-title">সহকারী শিক্ষক</div>
+                    <div class="pm-sig-title">ফলাফল প্রস্তুতকারী</div>
+                </div>
+                <div class="pm-sig-box">
+                    <div class="pm-sig-line"></div>
+                    <div class="pm-sig-name">${t1}</div>
+                    <div class="pm-sig-title">শ্রেণি শিক্ষক</div>
                 </div>
                 <div class="pm-sig-box">
                     <div class="pm-sig-line"></div>

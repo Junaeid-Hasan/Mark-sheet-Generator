@@ -9,6 +9,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Keep all 5 signature boxes on a single row (no wrapping) since we now have
+           5 boxes instead of the previous 4 — shrink font/spacing slightly so they
+           all fit across the page width. */
+        .pm-signatures {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .pm-signatures .pm-sig-box {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .pm-signatures .pm-sig-name,
+        .pm-signatures .pm-sig-title {
+            font-size: 0.78rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Remove browser default print header (page title) and footer (URL/date/page number)
+           that otherwise appear as a "watermark" in the top/bottom corners when printing
+           or saving the marksheet as PDF via the browser's print dialog. Setting @page
+           margin to 0 causes Chrome/Edge to omit these automatically. */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0 !important;
+            }
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="bg-orbs">
@@ -82,29 +119,17 @@
             <!-- Teachers & Class Input -->
             <div class="teacher-input-grid" style="margin-bottom: 20px;">
                 <div class="teacher-pair-box">
-                    <div class="teacher-pair-label">শ্রেণী শিক্ষক ১</div>
-                    <div class="form-row" style="gap: 12px; margin-bottom: 0;">
-                        <div class="form-group" style="flex: 0.6;">
-                            <label for="teacher1-class-input">শ্রেণী</label>
-                            <input type="text" id="teacher1-class-input" placeholder="যেমন: ৬ষ্ঠ-A" autocomplete="off" value="৬ষ্ঠ-A">
-                        </div>
-                        <div class="form-group">
-                            <label for="teacher1-name-input">নাম</label>
-                            <input type="text" id="teacher1-name-input" placeholder="শ্রেণী শিক্ষক ১ এর নাম লিখুন" autocomplete="off" value="">
-                        </div>
+                    <div class="teacher-pair-label">শ্রেণি শিক্ষক</div>
+                    <div class="form-group" style="margin-top: 4px;">
+                        <label for="teacher1-name-input">নাম</label>
+                        <input type="text" id="teacher1-name-input" placeholder="শ্রেণি শিক্ষকের নাম লিখুন" autocomplete="off" value="">
                     </div>
                 </div>
                 <div class="teacher-pair-box">
-                    <div class="teacher-pair-label">প্রস্তুতকারক</div>
-                    <div class="form-row" style="gap: 12px; margin-bottom: 0;">
-                        <div class="form-group">
-                            <label>পদবী</label>
-                            <div class="static-designation">সহকারী শিক্ষক</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="teacher2-name-input">নাম</label>
-                            <input type="text" id="teacher2-name-input" placeholder="প্রস্তুতকারকের নাম লিখুন" autocomplete="off" value="">
-                        </div>
+                    <div class="teacher-pair-label">ফলাফল প্রস্তুতকারী</div>
+                    <div class="form-group" style="margin-top: 4px;">
+                        <label for="teacher2-name-input">নাম</label>
+                        <input type="text" id="teacher2-name-input" placeholder="ফলাফল প্রস্তুতকারীর নাম লিখুন" autocomplete="off" value="">
                     </div>
                 </div>
                 <div class="teacher-pair-box">
@@ -112,6 +137,13 @@
                     <div class="form-group" style="margin-top: 4px;">
                         <label for="asst-head-name-input">নাম</label>
                         <input type="text" id="asst-head-name-input" placeholder="সহকারী প্রধান শিক্ষকের নাম লিখুন" autocomplete="off" value="রোমানা আক্তার">
+                    </div>
+                </div>
+                <div class="teacher-pair-box">
+                    <div class="teacher-pair-label">অভ্যন্তরীন পরীক্ষা কমিটি</div>
+                    <div class="form-group" style="margin-top: 4px;">
+                        <label for="exam-committee-name-input">নাম</label>
+                        <input type="text" id="exam-committee-name-input" placeholder="অভ্যন্তরীন পরীক্ষা কমিটির নাম লিখুন" autocomplete="off" value="">
                     </div>
                 </div>
             </div>

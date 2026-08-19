@@ -10,31 +10,86 @@
     <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Keep all 5 signature boxes on a single row (no wrapping) since we now have
-           5 boxes instead of the previous 4 — shrink font/spacing slightly so they
-           all fit across the page width. */
-        .pm-signatures {
+        /* Logo Header Section */
+        .pm-header-grid {
             display: flex;
-            flex-wrap: nowrap;
+            align-items: center;
             justify-content: space-between;
-            gap: 6px;
+            position: relative;
+            width: 100%;
         }
-        .pm-signatures .pm-sig-box {
-            flex: 1 1 0;
-            min-width: 0;
+        .pm-school-logo-wrap {
+            flex: 0 0 85px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
         }
-        .pm-signatures .pm-sig-name,
-        .pm-signatures .pm-sig-title {
-            font-size: 0.78rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .pm-school-logo {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            display: block;
+        }
+        .pm-header-center {
+            flex: 1;
+            text-align: center;
+            padding: 0 10px;
         }
 
-        /* Remove browser default print header (page title) and footer (URL/date/page number)
-           that otherwise appear as a "watermark" in the top/bottom corners when printing
-           or saving the marksheet as PDF via the browser's print dialog. Setting @page
-           margin to 0 causes Chrome/Edge to omit these automatically. */
+        /* Signature Section - Two Rows with generous space for text & matra */
+        .pm-signatures-wrapper {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .pm-sig-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            gap: 15px;
+        }
+        .pm-sig-box {
+            flex: 1;
+            text-align: center;
+            max-width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .pm-sig-img-container {
+            min-height: 40px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+        .pm-sig-img {
+            max-height: 38px;
+            max-width: 100px;
+            object-fit: contain;
+            display: block;
+        }
+        .pm-sig-line {
+            width: 100%;
+            border-top: 1px dashed #000;
+            margin: 4px 0 6px 0;
+        }
+        .pm-sig-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 2px;
+            color: #1e293b;
+        }
+        .pm-sig-title {
+            font-size: 0.78rem;
+            font-weight: 500;
+            line-height: 1.4;
+            color: #475569;
+        }
+
         @media print {
             @page {
                 size: A4 portrait;
@@ -43,6 +98,13 @@
             html, body {
                 margin: 0 !important;
                 padding: 0 !important;
+            }
+            .paper-marksheet-container {
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+            .paper-marksheet-container:last-child {
+                page-break-after: auto;
             }
         }
     </style>
@@ -109,41 +171,57 @@
             </div>
         </section>
 
-        <!-- Section 2: Student & Section Search Options -->
+        <!-- Section 2: Teacher & Search Options -->
         <section class="card hidden" id="search-section">
             <div class="card-header">
                 <span class="step-badge">২</span>
                 <h2>শিক্ষক তথ্য ও মার্কশিট জেনারেশন</h2>
             </div>
 
-            <!-- Teachers & Class Input -->
+            <!-- Teachers Dropdowns -->
             <div class="teacher-input-grid" style="margin-bottom: 20px;">
                 <div class="teacher-pair-box">
                     <div class="teacher-pair-label">শ্রেণি শিক্ষক</div>
                     <div class="form-group" style="margin-top: 4px;">
-                        <label for="teacher1-name-input">নাম</label>
-                        <input type="text" id="teacher1-name-input" placeholder="শ্রেণি শিক্ষকের নাম লিখুন" autocomplete="off" value="">
+                        <label for="teacher1-name-select">নাম নির্বাচন করুন</label>
+                        <select id="teacher1-name-select" class="form-select">
+                            <option value="মোহাম্মদ আনিসুজ্জামান">মোহাম্মদ আনিসুজ্জামান</option>
+                            <option value="মো.হুমায়ুন কবির">মো.হুমায়ুন কবির</option>
+                            <option value="মো.আব্দুল সাত্তার সরকার">মো.আব্দুল সাত্তার সরকার</option>
+                            <option value="মো.সাইফুল ইসলাম">মো.সাইফুল ইসলাম</option>
+                            <option value="আমিনুল ইসলাম খান">আমিনুল ইসলাম খান</option>
+                            <option value="মো.আকরাম হোসেন">মো.আকরাম হোসেন</option>
+                        </select>
                     </div>
                 </div>
+
                 <div class="teacher-pair-box">
                     <div class="teacher-pair-label">ফলাফল প্রস্তুতকারী</div>
                     <div class="form-group" style="margin-top: 4px;">
-                        <label for="teacher2-name-input">নাম</label>
-                        <input type="text" id="teacher2-name-input" placeholder="ফলাফল প্রস্তুতকারীর নাম লিখুন" autocomplete="off" value="">
+                        <label for="teacher2-name-display">নাম (নির্ধারিত)</label>
+                        <input type="text" id="teacher2-name-display" value="শামীমা নাসরিন, আমিনুল ইসলাম খান" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
                     </div>
                 </div>
+
                 <div class="teacher-pair-box">
                     <div class="teacher-pair-label">সহকারী প্রধান শিক্ষক</div>
                     <div class="form-group" style="margin-top: 4px;">
-                        <label for="asst-head-name-input">নাম</label>
-                        <input type="text" id="asst-head-name-input" placeholder="সহকারী প্রধান শিক্ষকের নাম লিখুন" autocomplete="off" value="রোমানা আক্তার">
+                        <label for="asst-head-name-select">নাম নির্বাচন করুন</label>
+                        <select id="asst-head-name-select" class="form-select">
+                            <option value="মো:আসাদুজ্জামান">মো:আসাদুজ্জামান</option>
+                            <option value="রোমানা আক্তার" selected>রোমানা আক্তার</option>
+                        </select>
                     </div>
                 </div>
+
                 <div class="teacher-pair-box">
                     <div class="teacher-pair-label">অভ্যন্তরীন পরীক্ষা কমিটি</div>
                     <div class="form-group" style="margin-top: 4px;">
-                        <label for="exam-committee-name-input">নাম</label>
-                        <input type="text" id="exam-committee-name-input" placeholder="অভ্যন্তরীন পরীক্ষা কমিটির নাম লিখুন" autocomplete="off" value="">
+                        <label for="exam-committee-name-select">নাম নির্বাচন করুন</label>
+                        <select id="exam-committee-name-select" class="form-select">
+                            <option value="মোহাম্মদ আনিসুজ্জামান">মোহাম্মদ আনিসুজ্জামান</option>
+                            <option value="মোহাম্মদ শাহিন মিয়া">মোহাম্মদ শাহিন মিয়া</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -190,7 +268,7 @@
                         </button>
                     </div>
 
-                    <!-- Batch PDF Download Progress Bar -->
+                    <!-- Batch Progress -->
                     <div id="batch-progress-container" class="hidden" style="margin-top: 14px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.85rem; color: var(--text-secondary, #555);">
                             <span id="batch-progress-text">প্রস্তুত হচ্ছে...</span>
@@ -221,7 +299,6 @@
                 </div>
             </div>
 
-            <!-- Mobile Scroll Indicator (only visible on mobile screens) -->
             <div class="mobile-scroll-indicator">
                 <span>📱 পুরো মার্কশিট দেখতে ডানে-বামে স্ক্রোল (Swipe) করুন</span>
             </div>
@@ -234,11 +311,11 @@
 
     <!-- SheetJS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- html2canvas for Bengali font PDF rendering -->
+    <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- jsPDF CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- jsPDF AutoTable plugin -->
+    <!-- jsPDF AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
     <script src="script.js"></script>

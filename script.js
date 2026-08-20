@@ -16,11 +16,11 @@ let currentMode = 'single';
 const teacherSignatures = {
     "মোহাম্মদ আনিসুজ্জামান": "images/anis.jpeg",
     "মো.হুমায়ুন কবির": "images/humayun.jpeg",
-    "মো.আব্দুল সাত্তার সরকার": "images/romana.jpeg", //signature nai
+    "মো.আব্দুল সাত্তার সরকার": "images/sattar.jpeg", //signature nai
     "মুহম্মদ ছাইফুল ইসলাম": "images/saiful.jpeg",
     "আমিনুল ইসলাম খাঁন": "images/aminul.jpeg",
-    "মো.আকরাম হোসেন": "images/akram.jpeg",
-    "মো:আসাদুজ্জামান": "images/asad.jpeg", // signature nai
+    "মো.আকরাম হোসেন": "images/akram.jpeg", // signature nai
+    "মোহাম্মদ আসাদুজ্জামান": "images/asad.jpeg", // signature nai
     "রোমানা আক্তার": "images/romana.jpeg",
     "মোহাম্মদ শাহীন মিঞা": "images/shahin.jpeg",
     "ফলাফল প্রস্তুতকারী": "images/nasrin.jpeg",
@@ -699,11 +699,11 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
             <tr>
                 <td style="text-align: center; border: 1px solid #000; padding: 4px;">${toBn(idx + 1)}</td>
                 <td style="text-align: left; font-weight: 600; border: 1px solid #000; padding: 4px 8px;">${subj.name}</td>
-                <td style="text-align: center; border: 1px solid #000; padding: 4px;">${ctHighestStr}</td>
-                <td style="text-align: center; border: 1px solid #000; padding: 4px;">${hyHighestStr}</td>
-                <td style="text-align: center; border: 1px solid #000; padding: 4px;">${ctObtStr}</td>
-                <td style="text-align: center; border: 1px solid #000; padding: 4px; ${failStyle}">${hyObtStr}</td>
-                <td style="text-align: center; border: 1px solid #000; padding: 4px;">${totalCellHTML}</td>
+                <td style="text-align: center; border: 1px solid #000; padding: 4px; font-size: 1rem;">${ctHighestStr}</td>
+                <td style="text-align: center; border: 1px solid #000; padding: 4px; font-size: 1rem;">${hyHighestStr}</td>
+                <td style="text-align: center; border: 1px solid #000; padding: 4px; font-size: 1rem;">${ctObtStr}</td>
+                <td style="text-align: center; border: 1px solid #000; padding: 4px; font-size: 1rem; ${failStyle}">${hyObtStr}</td>
+                <td style="text-align: center; border: 1px solid #000; padding: 4px; font-size: 1rem;">${totalCellHTML}</td>
         `;
 
         // Attach Rowspan Columns (Failed Count & Merit Position) on the First Row
@@ -730,7 +730,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
     return `
         <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Hind Siliguri', 'Anek Bangla', sans-serif; position: relative; overflow: hidden; margin-top: 25px;">
             <!-- Background Watermark Logo -->
-            <img src="images/logo.webp" alt="" class="pm-watermark-logo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65%; max-width: 500px; opacity: 0.07; z-index: 0; pointer-events: none; user-select: none;">
+            <img src="images/logo.webp" alt="" class="pm-watermark-logo" style="position: absolute; top: 49%; left: 57%; transform: translate(-50%, -50%); width: 40%; max-width: 450px; opacity: 0.07; z-index: 0; pointer-events: none; user-select: none;">
             <div class="pm-content-wrap" style="position: relative; z-index: 1;">
             <!-- School Header & Logo -->
             <div class="pm-header" style="margin-bottom: 10px;">
@@ -771,7 +771,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                     <tr>
                         <th rowspan="2" style="border: 1px solid #000; width: 6%; padding: 4px;">ক্রমিক নং</th>
                         <th rowspan="2" style="border: 1px solid #000; width: 28%; padding: 4px; text-align: center;">বিষয় এর নাম</th>
-                        <th colspan="2" style="border: 1px solid #000; padding: 4px;">শ্রেণিতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
+                        <th colspan="2" style="border: 1px solid #000; padding: 4px;">শ্রেণীতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
                         <th colspan="3" style="border: 1px solid #000; padding: 4px;">প্রাপ্ত নম্বর</th>
                         <th rowspan="2" style="border: 1px solid #000; width: 11%; padding: 4px;">অকৃতকার্য বিষয়<br>(অর্ধবার্ষিক)</th>
                         <th rowspan="2" style="border: 1px solid #000; width: 11%; padding: 4px;">মেধাক্রম</th>
@@ -800,20 +800,20 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                 <div class="pm-sig-row" style="display: flex; justify-content: space-around; align-items: flex-end; gap: 15px;">
                     <div class="pm-sig-box" style="flex: 1; text-align: center; max-width: 220px; display: flex; flex-direction: column; align-items: center;">
                         <div class="pm-sig-img-container" style="min-height: 38px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px;">
-                            <img src="${sigResultPrepSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
+                            <img src="${sigHeadTeacherSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
                         </div>
                         <div class="pm-sig-line" style="width: 100%; border-top: 1px dashed #000; margin: 4px 0;"></div>
-                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">শামিমা নাসরিন & আমিনুল ইসলাম খাঁন</div>
-                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">ফলাফল প্রস্তুতকারী</div>
+                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">সোহরাব উদ্দিন</div>
+                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">প্রধান শিক্ষক</div>
                     </div>
 
                     <div class="pm-sig-box" style="flex: 1; text-align: center; max-width: 220px; display: flex; flex-direction: column; align-items: center;">
                         <div class="pm-sig-img-container" style="min-height: 38px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px;">
-                            <img src="${sigClassTeacherSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
+                            <img src="${sigAsstHeadSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
                         </div>
                         <div class="pm-sig-line" style="width: 100%; border-top: 1px dashed #000; margin: 4px 0;"></div>
-                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">${t1Name}</div>
-                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">শ্রেণি শিক্ষক</div>
+                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">${asstHeadName}</div>
+                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">সহকারী প্রধান শিক্ষক</div>
                     </div>
 
                     <div class="pm-sig-box" style="flex: 1; text-align: center; max-width: 220px; display: flex; flex-direction: column; align-items: center;">
@@ -830,20 +830,20 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                 <div class="pm-sig-row" style="display: flex; justify-content: space-evenly; align-items: flex-end; gap: 15px;">
                     <div class="pm-sig-box" style="flex: 1; text-align: center; max-width: 220px; display: flex; flex-direction: column; align-items: center;">
                         <div class="pm-sig-img-container" style="min-height: 38px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px;">
-                            <img src="${sigAsstHeadSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
+                            <img src="${sigClassTeacherSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
                         </div>
                         <div class="pm-sig-line" style="width: 100%; border-top: 1px dashed #000; margin: 4px 0;"></div>
-                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">${asstHeadName}</div>
-                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">সহকারী প্রধান শিক্ষক</div>
+                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">${t1Name}</div>
+                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">শ্রেণি শিক্ষক</div>
                     </div>
 
                     <div class="pm-sig-box" style="flex: 1; text-align: center; max-width: 220px; display: flex; flex-direction: column; align-items: center;">
                         <div class="pm-sig-img-container" style="min-height: 38px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px;">
-                            <img src="${sigHeadTeacherSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
+                            <img src="${sigResultPrepSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
                         </div>
                         <div class="pm-sig-line" style="width: 100%; border-top: 1px dashed #000; margin: 4px 0;"></div>
-                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">সোহরাব উদ্দিন</div>
-                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">প্রধান শিক্ষক</div>
+                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">শামিমা নাসরিন & আমিনুল ইসলাম খাঁন</div>
+                        <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">ফলাফল প্রস্তুতকারী</div>
                     </div>
                 </div>
             </div>

@@ -728,21 +728,21 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
     const sigHeadTeacherSrc = getSignatureSrc("সোহরাব উদ্দিন");
 
     return `
-        <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Hind Siliguri', 'Anek Bangla', sans-serif; position: relative; overflow: hidden; margin-top: 25px;">
+        <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Noto Sans Bengali', 'Hind Siliguri', 'Anek Bangla', sans-serif; position: relative; overflow: hidden; margin-top: 25px;">
             <!-- Background Watermark Logo -->
-            <img src="images/logo.webp" alt="" class="pm-watermark-logo" style="position: absolute; top: 49%; left: 57%; transform: translate(-50%, -50%); width: 40%; max-width: 450px; opacity: 0.07; z-index: 0; pointer-events: none; user-select: none;">
+            <img src="images/logo.webp" alt="" class="pm-watermark-logo" style="position: absolute; top: 49%; left: 57%; transform: translate(-50%, -50%); width: 40%; max-width: 450px; opacity: 0.018; z-index: 0; pointer-events: none; user-select: none;">
             <div class="pm-content-wrap" style="position: relative; z-index: 1;">
             <!-- School Header & Logo -->
             <div class="pm-header" style="margin-bottom: 10px;">
                 <div class="pm-header-grid" style="display: flex; align-items: center; justify-content: space-between;">
-                    <div class="pm-school-logo-wrap" style="flex: 0 0 80px;">
-                        <img src="images/logo.webp" alt="School Logo" class="pm-school-logo" style="width: 80px; height: 80px; object-fit: contain;">
+                    <div class="pm-school-logo-wrap" style="flex: 0 0 92px;">
+                        <img src="images/logo.webp" alt="School Logo" class="pm-school-logo" style="width: 92px; height: 92px; object-fit: contain;">
                     </div>
                     <div class="pm-header-center" style="flex: 1; text-align: center;">
-                        <div class="pm-school-name" style="font-size: 1.4rem; font-weight: 700; color: #000;">${workbookData.schoolName}</div>
-                        <div class="pm-school-sub1" style="font-size: 0.85rem;">ডাকঘর: সেরাজনগর, উপজেলা: রায়পুরা, জেলা: নরসিংদী।</div>
-                        <div class="pm-school-sub2" style="font-size: 0.8rem;">স্থাপিত: ১৯১১ খ্রিঃ | EIIN: 112839 | বিদ্যালয় কোড: ৩8৫১</div>
-                        <div class="pm-school-contact" style="font-size: 0.8rem;">ই-মেইল: smampg.hs112839@gmail.com</div>
+                        <div class="pm-school-name" style="font-size: 1.6rem; font-weight: 700; color: #000;">${workbookData.schoolName}</div>
+                        <div class="pm-school-sub1" style="font-size: 1rem;">ডাকঘর: সেরাজনগর, উপজেলা: রায়পুরা, জেলা: নরসিংদী।</div>
+                        <div class="pm-school-sub2" style="font-size: 0.95rem;">স্থাপিত: ১৯১১ খ্রিঃ | EIIN: 112839 | বিদ্যালয় কোড: ৩8৫১</div>
+                        <div class="pm-school-contact" style="font-size: 0.95rem;">ই-মেইল: smampg.hs112839@gmail.com</div>
                     </div>
                 </div>
             </div>
@@ -752,7 +752,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
             </div>
 
             <!-- Student Info Metadata Header -->
-            <div class="pm-student-meta" style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">
+            <div class="pm-student-meta" style="margin-bottom: 8px; font-size: 1.1rem; font-weight: 600;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr>
                         <td style="padding: 2px 0; width: 60%;"><strong>শিক্ষার্থীর নাম :</strong> ${student.name}</td>

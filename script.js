@@ -16,15 +16,15 @@ let currentMode = 'single';
 const teacherSignatures = {
     "মোহাম্মদ আনিসুজ্জামান": "images/anis.jpeg",
     "মো.হুমায়ুন কবির": "images/humayun.jpeg",
-    "মো.আব্দুল সাত্তার সরকার": "images/romana.jpeg",
-    "মো.সাইফুল ইসলাম": "images/saiful.jpeg",
-    "আমিনুল ইসলাম খান": "images/romana.jpeg",
-    "মো.আকরাম হোসেন": "images/romana.jpeg",
-    "মো:আসাদুজ্জামান": "images/romana.jpeg",
+    "মো.আব্দুল সাত্তার সরকার": "images/romana.jpeg", //signature nai
+    "মুহম্মদ ছাইফুল ইসলাম": "images/saiful.jpeg",
+    "আমিনুল ইসলাম খাঁন": "images/aminul.jpeg",
+    "মো.আকরাম হোসেন": "images/romana.jpeg", // signature nai
+    "মো:আসাদুজ্জামান": "images/romana.jpeg", // signature nai
     "রোমানা আক্তার": "images/romana.jpeg",
-    "মোহাম্মদ শাহিন মিয়া": "images/shahin.jpeg",
+    "মোহাম্মদ শাহীন মিঞা": "images/shahin.jpeg",
     "ফলাফল প্রস্তুতকারী": "images/nasrin.jpeg",
-    "সোহরাব উদ্দিন": "images/nasrin.jpeg"
+    "সোহরাব উদ্দিন": "images/nasrin.jpeg" //signature nai
 };
 
 function getSignatureSrc(teacherName) {
@@ -800,7 +800,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                             <img src="${sigResultPrepSrc}" alt="Signature" class="pm-sig-img" style="max-height: 36px; max-width: 120px; object-fit: contain;">
                         </div>
                         <div class="pm-sig-line" style="width: 100%; border-top: 1px dashed #000; margin: 4px 0;"></div>
-                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">শামীমা নাসরিন & আমিনুল ইসলাম খান</div>
+                        <div class="pm-sig-name" style="font-size: 0.85rem; font-weight: 600; line-height: 1.5; color: #1e293b;">শামিমা নাসরিন & আমিনুল ইসলাম খাঁন</div>
                         <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">ফলাফল প্রস্তুতকারী</div>
                     </div>
 

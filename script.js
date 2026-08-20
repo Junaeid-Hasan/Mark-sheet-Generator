@@ -728,7 +728,10 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
     const sigHeadTeacherSrc = getSignatureSrc("সোহরাব উদ্দিন");
 
     return `
-        <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Hind Siliguri', 'Anek Bangla', sans-serif;">
+        <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Hind Siliguri', 'Anek Bangla', sans-serif; position: relative; overflow: hidden;">
+            <!-- Background Watermark Logo -->
+            <img src="images/logo.webp" alt="" class="pm-watermark-logo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65%; max-width: 500px; opacity: 0.07; z-index: 0; pointer-events: none; user-select: none;">
+            <div class="pm-content-wrap" style="position: relative; z-index: 1;">
             <!-- School Header & Logo -->
             <div class="pm-header" style="margin-bottom: 10px;">
                 <div class="pm-header-grid" style="display: flex; align-items: center; justify-content: space-between;">
@@ -843,6 +846,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                         <div class="pm-sig-title" style="font-size: 0.78rem; font-weight: 500; line-height: 1.4; color: #475569;">প্রধান শিক্ষক</div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     `;

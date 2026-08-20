@@ -19,12 +19,12 @@ const teacherSignatures = {
     "মো.আব্দুল সাত্তার সরকার": "images/romana.jpeg", //signature nai
     "মুহম্মদ ছাইফুল ইসলাম": "images/saiful.jpeg",
     "আমিনুল ইসলাম খাঁন": "images/aminul.jpeg",
-    "মো.আকরাম হোসেন": "images/romana.jpeg", // signature nai
-    "মো:আসাদুজ্জামান": "images/romana.jpeg", // signature nai
+    "মো.আকরাম হোসেন": "images/akram.jpeg",
+    "মো:আসাদুজ্জামান": "images/asad.jpeg", // signature nai
     "রোমানা আক্তার": "images/romana.jpeg",
     "মোহাম্মদ শাহীন মিঞা": "images/shahin.jpeg",
     "ফলাফল প্রস্তুতকারী": "images/nasrin.jpeg",
-    "সোহরাব উদ্দিন": "images/nasrin.jpeg" //signature nai
+    "সোহরাব উদ্দিন": "images/shorab.jpeg" //signature nai
 };
 
 function getSignatureSrc(teacherName) {
@@ -728,7 +728,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
     const sigHeadTeacherSrc = getSignatureSrc("সোহরাব উদ্দিন");
 
     return `
-        <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Hind Siliguri', 'Anek Bangla', sans-serif; position: relative; overflow: hidden;">
+        <div class="paper-marksheet-container" style="background: #fff; padding: 15px; color: #000; font-family: 'Hind Siliguri', 'Anek Bangla', sans-serif; position: relative; overflow: hidden; margin-top: 25px;">
             <!-- Background Watermark Logo -->
             <img src="images/logo.webp" alt="" class="pm-watermark-logo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65%; max-width: 500px; opacity: 0.07; z-index: 0; pointer-events: none; user-select: none;">
             <div class="pm-content-wrap" style="position: relative; z-index: 1;">
@@ -742,7 +742,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                         <div class="pm-school-name" style="font-size: 1.4rem; font-weight: 700; color: #000;">${workbookData.schoolName}</div>
                         <div class="pm-school-sub1" style="font-size: 0.85rem;">ডাকঘর: সেরাজনগর, উপজেলা: রায়পুরা, জেলা: নরসিংদী।</div>
                         <div class="pm-school-sub2" style="font-size: 0.8rem;">স্থাপিত: ১৯১১ খ্রিঃ | EIIN: 112839 | বিদ্যালয় কোড: ৩8৫১</div>
-                        <div class="pm-school-contact" style="font-size: 0.8rem;">ইমেইল: smampg.hs112839@gmail.com</div>
+                        <div class="pm-school-contact" style="font-size: 0.8rem;">ই-মেইল: smampg.hs112839@gmail.com</div>
                     </div>
                 </div>
             </div>
@@ -756,7 +756,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr>
                         <td style="padding: 2px 0; width: 60%;"><strong>শিক্ষার্থীর নাম :</strong> ${student.name}</td>
-                        <td style="padding: 2px 0; width: 40%; text-align: right;"><strong>শ্রেণী :</strong> ${workbookData.className}</td>
+                        <td style="padding: 2px 0; width: 40%; text-align: right;"><strong>শ্রেণি :</strong> ${workbookData.className}</td>
                     </tr>
                     <tr>
                         <td style="padding: 2px 0;"><strong>শিফট :</strong> ${shiftName}</td>
@@ -771,9 +771,9 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                     <tr>
                         <th rowspan="2" style="border: 1px solid #000; width: 6%; padding: 4px;">ক্রমিক নং</th>
                         <th rowspan="2" style="border: 1px solid #000; width: 28%; padding: 4px; text-align: center;">বিষয় এর নাম</th>
-                        <th colspan="2" style="border: 1px solid #000; padding: 4px;">শ্রেণীতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
+                        <th colspan="2" style="border: 1px solid #000; padding: 4px;">শ্রেণিতে বিষয় ভিত্তিক<br>সর্বোচ্চ প্রাপ্ত নম্বর</th>
                         <th colspan="3" style="border: 1px solid #000; padding: 4px;">প্রাপ্ত নম্বর</th>
-                        <th rowspan="2" style="border: 1px solid #000; width: 11%; padding: 4px;">অকৃতকার্য বিষয়<br>(পরীক্ষায়)</th>
+                        <th rowspan="2" style="border: 1px solid #000; width: 11%; padding: 4px;">অকৃতকার্য বিষয়<br>(অর্ধবার্ষিক)</th>
                         <th rowspan="2" style="border: 1px solid #000; width: 11%; padding: 4px;">মেধাক্রম</th>
                     </tr>
                     <tr>

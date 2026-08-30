@@ -50,6 +50,13 @@ function getBengaliRankStr(rank) {
     return `${numBn}${suffix}`;
 }
 
+function isNumericRoll(str) {
+    if (!str) return false;
+    const bnToEn = { '০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9' };
+    let enStr = String(str).trim().replace(/[০-৯]/g, d => bnToEn[d]);
+    return /^\d+$/.test(enStr);
+}
+
 function getCleanClassNumber() {
     let rawClass = workbookData.className || '৬ষ্ঠ';
     let match = rawClass.match(/\d+/);
@@ -185,6 +192,17 @@ function parseWorksheet(sheet) {
         return getCellValue(sheet, r, c);
     }
 
+    // Some sheet layouts include an explicit "max marks" row right after the
+    // assessment-type row (row 8); others go straight from the assessment-type
+    // row into student data. Detect which layout this sheet uses instead of
+    // assuming row 9 is always max-marks — otherwise the first student's real
+    // marks get misread as "max marks" and that student is skipped entirely.
+    let probeRoll = getCellValue(sheet, 9, 1);
+    let probeName = getCellValue(sheet, 9, 2);
+    let hasMaxMarkRow = !(probeRoll || probeName);
+    let maxMarkRow = hasMaxMarkRow ? 9 : null;
+    let dataStartRow = hasMaxMarkRow ? 10 : 9;
+
     let subjectsMap = [];
     for (let c = 4; c <= range.e.c; c++) {
         let subjRaw = getMergedValue(7, c) || getCellValue(sheet, 7, c);
@@ -194,7 +212,7 @@ function parseWorksheet(sheet) {
 
         if (subjName) {
             let assessName = String(getCellValue(sheet, 8, c) || '').trim();
-            let maxMark = parseFloat(getCellValue(sheet, 9, c)) || 0;
+            let maxMark = maxMarkRow !== null ? (parseFloat(getCellValue(sheet, maxMarkRow, c)) || 0) : 0;
 
             let existing = subjectsMap.find(s => s.name === subjName);
             if (!existing) {
@@ -241,7 +259,7 @@ function parseWorksheet(sheet) {
     let currentSection = 'A';
     let sectionSet = new Set();
 
-    for (let r = 10; r <= range.e.r; r++) {
+    for (let r = dataStartRow; r <= range.e.r; r++) {
         let rollVal = getCellValue(sheet, r, 1);
         let nameVal = getCellValue(sheet, r, 2);
         let secVal  = getCellValue(sheet, r, 3);
@@ -252,7 +270,16 @@ function parseWorksheet(sheet) {
             let nameStr = nameVal ? String(nameVal).trim() : '';
             let rollStr = rollVal !== null ? String(rollVal).trim() : '';
 
-            if (nameStr.includes('ছাত্র') || nameStr.includes('নাম') || rollStr.includes('রোল')) continue;
+            // A genuine student row always has a numeric roll. Only treat a row as a
+            // repeated-header row (and skip it) when the roll is NOT numeric — matching
+            // on words like "নাম"/"ছাত্র"/"রোল" as substrings was wrongly skipping real
+            // students whose names happen to contain those syllables (e.g. নামিরা, ইনামুল).
+            if (!isNumericRoll(rollStr)) {
+                if (nameStr === 'নাম' || nameStr.includes('ছাত্র/ছাত্রীর নাম') || nameStr.includes('শিক্ষার্থীর নাম') ||
+                    rollStr === 'রোল' || rollStr.includes('রোল নং') || rollStr === 'ক্রঃ' || rollStr === 'ক্রমিক') {
+                    continue;
+                }
+            }
             if (!nameStr && !rollStr) continue;
 
             sectionSet.add(currentSection);
@@ -312,12 +339,20 @@ function parseWorksheet(sheet) {
     workbookData.students = students;
     workbookData.sections = Array.from(sectionSet).sort();
 
-    let sortedOverall = [...students].sort((a, b) => b.totalObtained - a.totalObtained);
+    // Merit order: fewer failed subjects always outranks more failed subjects
+    // (all-pass > 1 fail > 2 fail > ...); total marks only break ties within the
+    // same failed-subject count.
+    function meritCompare(a, b) {
+        if (a.failedCount !== b.failedCount) return a.failedCount - b.failedCount;
+        return b.totalObtained - a.totalObtained;
+    }
+
+    let sortedOverall = [...students].sort(meritCompare);
     sortedOverall.forEach((st, idx) => { st.rankOverall = idx + 1; });
 
     workbookData.sections.forEach(sec => {
         let secStudents = students.filter(s => s.section === sec);
-        secStudents.sort((a, b) => b.totalObtained - a.totalObtained);
+        secStudents.sort(meritCompare);
         secStudents.forEach((st, idx) => { st.rankSection = idx + 1; });
 
         let secHighest = {};
@@ -866,6 +901,9 @@ function viewAllSectionStudents() {
     const display = document.getElementById('marksheet-display');
 
     let secStudents = workbookData.students.filter(s => s.section === sec);
+    // Show in merit order (rankSection already reflects fewest-failed-subjects-first,
+    // then total marks) instead of the roll-number order students were parsed in.
+    secStudents.sort((a, b) => a.rankSection - b.rankSection);
     if (!secStudents.length) {
         alert('এই শাখায় কোনো শিক্ষার্থী পাওয়া যায়নি!');
         return;

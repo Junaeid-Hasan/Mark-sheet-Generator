@@ -929,10 +929,21 @@ async function downloadPDF() {
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        const PDF_MARGIN_MM = 10; // even margin on all four sides so print isn't edge-to-edge
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const usableWidth = pageWidth - (PDF_MARGIN_MM * 2);
+        let imgWidth = usableWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const usableHeight = pageHeight - (PDF_MARGIN_MM * 2);
+        if (imgHeight > usableHeight) {
+            imgHeight = usableHeight;
+            imgWidth = (canvas.width * imgHeight) / canvas.height;
+        }
+        const offsetX = (pageWidth - imgWidth) / 2;
+        const offsetY = PDF_MARGIN_MM;
 
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'JPEG', offsetX, offsetY, imgWidth, imgHeight);
         pdf.save(getPDFFileName(currentStudent));
     } catch (err) {
         console.error('PDF Generation Error:', err);
@@ -967,6 +978,7 @@ async function downloadAllSectionPDF() {
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
+    const PDF_MARGIN_MM = 10; // even margin on all four sides so print isn't edge-to-edge
 
     for (let i = 0; i < secStudents.length; i++) {
         const student = secStudents[i];
@@ -982,11 +994,21 @@ async function downloadAllSectionPDF() {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const usableWidth = pageWidth - (PDF_MARGIN_MM * 2);
+        let imgWidth = usableWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const usableHeight = pageHeight - (PDF_MARGIN_MM * 2);
+        if (imgHeight > usableHeight) {
+            imgHeight = usableHeight;
+            imgWidth = (canvas.width * imgHeight) / canvas.height;
+        }
+        const offsetX = (pageWidth - imgWidth) / 2;
+        const offsetY = PDF_MARGIN_MM;
 
         if (i > 0) pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'JPEG', offsetX, offsetY, imgWidth, imgHeight);
     }
 
     document.body.removeChild(tempDiv);

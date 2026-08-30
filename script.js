@@ -740,9 +740,10 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                     </div>
                     <div class="pm-header-center" style="flex: 1; text-align: center;">
                         <div class="pm-school-name" style="font-size: 1.6rem; font-weight: 700; color: #000;">${workbookData.schoolName}</div>
-                        <div class="pm-school-sub1" style="font-size: 1rem;">ডাকঘর: সেরাজনগর, উপজেলা: রায়পুরা, জেলা: নরসিংদী।</div>
-                        <div class="pm-school-sub2" style="font-size: 0.95rem;">স্থাপিত: ১৯১১ খ্রিঃ | EIIN: 112839 | বিদ্যালয় কোড: ৩8৫১</div>
-                        <div class="pm-school-contact" style="font-size: 0.95rem;">ই-মেইল: smampg.hs112839@gmail.com</div>
+                        <div class="pm-school-sub2" style="font-size: 0.99rem;">স্থাপিত: ১৯৪৭ ইং</div>
+
+                        <div class="pm-school-sub1" style="font-size: 1rem;">ডাকঘর ও উপজেলা : রায়পুরা, জেলা: নরসিংদী।</div>
+                        <div class="pm-school-contact" style="font-size: 0.95rem;">ই-মেইল: school112766@gmail.com | EIIN: 112766 | বিদ্যালয় কোড: 3229</div>
                     </div>
                 </div>
             </div>

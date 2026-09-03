@@ -775,15 +775,15 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
                     </div>
                     <div class="pm-header-center" style="flex: 1; text-align: center;">
                         <div class="pm-school-name" style="font-size: 1.6rem; font-weight: 700; color: #000;">${workbookData.schoolName}</div>
-                        <div class="pm-school-sub2" style="font-size: 0.99rem;">স্থাপিত: ১৯৪৭ ইং</div>
+                        <div class="pm-school-sub2" style="font-size: 1.4rem;">স্থাপিত: ১৯৪৭ ইং</div>
 
-                        <div class="pm-school-sub1" style="font-size: 1rem;">ডাকঘর ও উপজেলা : রায়পুরা, জেলা: নরসিংদী।</div>
-                        <div class="pm-school-contact" style="font-size: 0.95rem;">ই-মেইল: school112766@gmail.com | EIIN: 112766 | বিদ্যালয় কোড: 3229</div>
+                        <div class="pm-school-sub1" style="font-size: 1.4rem;">ডাকঘর ও উপজেলা : রায়পুরা, জেলা: নরসিংদী।</div>
+                        <div class="pm-school-contact" style="font-size: 1.2rem;">ই-মেইল: school112766@gmail.com | EIIN: 112766 | বিদ্যালয় কোড: 3229</div>
                     </div>
                 </div>
             </div>
 
-            <div style="text-align: center; margin-bottom: 12px;">
+            <div style="text-align: center; margin-bottom: 12px; margin-top: 18px;">
                 <span class="pm-title-box" style="display: inline-block; border: 1.5px solid #000; padding: 3px 18px; font-size: 1.1rem; font-weight: 700; border-radius: 4px;">${workbookData.examName}</span>
             </div>
 
@@ -802,7 +802,7 @@ function generateSingleMarksheetHTML(student, t1Name, asstHeadName, examCommitte
             </div>
 
             <!-- Subjects & Results Table -->
-            <table class="pm-table" style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; text-align: center; font-size: 0.88rem; margin-bottom: 12px;">
+            <table class="pm-table" style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; text-align: center; font-size: 1.2rem; margin-bottom: 15px; margin-top: 35px">
                 <thead>
                     <tr>
                         <th rowspan="2" style="border: 1px solid #000; width: 6%; padding: 4px;">ক্রমিক নং</th>
